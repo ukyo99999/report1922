@@ -1,23 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/topLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black"
     android:keepScreenOn="true">
 
-    <com.amolg.flutterbarcodescanner.camera.CameraSourcePreview
-        android:id="@+id/preview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <RelativeLayout
+        android:id="@+id/c"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <com.amolg.flutterbarcodescanner.camera.GraphicOverlay
-            android:id="@+id/graphicOverlay"
+        <com.amolg.flutterbarcodescanner.camera.CameraSourcePreview
+            android:id="@+id/preview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#44000000" />
+            android:layout_height="match_parent">
 
-    </com.amolg.flutterbarcodescanner.camera.CameraSourcePreview>
+            <com.amolg.flutterbarcodescanner.camera.GraphicOverlay
+                android:id="@+id/graphicOverlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </com.amolg.flutterbarcodescanner.camera.CameraSourcePreview>
+
+    </RelativeLayout>
 
     <Button
         android:id="@+id/btnBarcodeCaptureCancel"
@@ -28,20 +40,26 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/ic_close"
-        android:textColor="@android:color/transparent" />
+        android:textColor="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <RelativeLayout
         android:id="@+id/layoutBottom"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
         android:background="@android:color/black"
-        android:visibility="gone">
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <ImageView
             android:id="@+id/imgViewSwitchCamera"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true"
@@ -49,15 +67,17 @@
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
             android:contentDescription="Switch camera"
-            android:src="@drawable/ic_switch_camera" />
+            android:src="@drawable/ic_switch_camera"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/imgViewBarcodeCaptureUseFlash"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_centerInParent="true"
             android:contentDescription="Flash button"
-            android:src="@drawable/ic_barcode_flash_off" />
+            android:src="@drawable/ic_barcode_flash_off"
+            android:visibility="visible" />
 
     </RelativeLayout>
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

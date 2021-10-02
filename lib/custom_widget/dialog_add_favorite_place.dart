@@ -167,7 +167,7 @@ class _DialogAddFavoritePlace extends State<DialogAddFavoritePlace> {
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', '', false, ScanMode.QR);
+          '#ff6666', '', true, ScanMode.QR);
       print("scanQR() scaned code=>" + barcodeScanRes);
       _verifyCode(barcodeScanRes);
     } on PlatformException {

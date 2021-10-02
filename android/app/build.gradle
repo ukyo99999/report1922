@@ -39,7 +39,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "app.appsamurai.report1922"
+        applicationId "app.appsamurai.report1922qr"
         minSdkVersion 23
         targetSdkVersion 30
         versionCode flutterVersionCode.toInteger()
