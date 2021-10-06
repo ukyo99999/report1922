@@ -9,13 +9,17 @@
     android:keepScreenOn="true">
 
     <RelativeLayout
-        android:id="@+id/c"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:id="@+id/camera"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.3">
 
         <com.amolg.flutterbarcodescanner.camera.CameraSourcePreview
             android:id="@+id/preview"
@@ -50,11 +54,11 @@
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="8dp"
-        android:background="@android:color/black"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/camera">
 
         <ImageView
             android:id="@+id/imgViewSwitchCamera"

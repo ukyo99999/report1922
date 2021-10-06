@@ -12,6 +12,7 @@ import 'package:report1922/custom_widget/dialog_modify_favorite_place.dart';
 import 'package:report1922/custom_widget/dismissible_widget.dart';
 import 'package:report1922/model/place_model.dart';
 import 'package:report1922/util/view_util.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../util/database_handler.dart';
 
@@ -20,17 +21,48 @@ class FavoritePage extends StatefulWidget {
   _FavoritePage createState() => _FavoritePage();
 }
 
-class _FavoritePage extends State<FavoritePage> {
+class _FavoritePage extends State<FavoritePage> with WidgetsBindingObserver {
   late DatabaseHandler dbHandler;
   late Future<List<Place>> _listOfPlaces;
   int itemNumbers = 0;
   List<String> phoneNumbers = ["1922"];
 
+  static const platform = const MethodChannel('app.appsamurai.report1922');
+  static const String PREF_KEY_LAUNCH_SCANNER = "IS_DEFAULT_SCANNER";
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  late Future<bool> _isDefaultLaunchScanner;
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance?.addObserver(this);
+
     this.dbHandler = DatabaseHandler();
     this._listOfPlaces = getPlaces();
+
+    this._isDefaultLaunchScanner = _prefs.then((SharedPreferences prefs) {
+      return prefs.getBool(PREF_KEY_LAUNCH_SCANNER) ?? false;
+    });
+    _launchPref();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.resumed) {
+      this._isDefaultLaunchScanner = _prefs.then((SharedPreferences prefs) {
+        return prefs.getBool(PREF_KEY_LAUNCH_SCANNER) ?? false;
+      });
+      getLifeCycle();
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    print("@@@@@@@@@  dispose");
+    WidgetsBinding.instance?.removeObserver(this);
   }
 
   @override
@@ -67,6 +99,22 @@ class _FavoritePage extends State<FavoritePage> {
       home: Scaffold(
           appBar: AppBar(
             title: Text(AppLocalizations.of(context)!.app_title),
+            actions: <Widget>[
+              PopupMenuButton<MenuItem>(
+                onSelected: _menuItemSelect,
+                itemBuilder: (BuildContext context) {
+                  return choices.map((MenuItem choice) {
+                    return PopupMenuItem<MenuItem>(
+                      value: choice,
+                      child: ListTile(
+                        leading: Icon(choice.icon),
+                        title: Text(choice.title),
+                      ),
+                    );
+                  }).toList();
+                },
+              ),
+            ],
           ),
           body: Stack(
             children: [
@@ -487,4 +535,49 @@ class _FavoritePage extends State<FavoritePage> {
       }
     });
   }
+
+  void _menuItemSelect(MenuItem index) {
+    switch (choices.indexOf(index)) {
+      case 0:
+        _setPrefLaunchScanner();
+        break;
+    }
+  }
+
+  void getLifeCycle() async {
+    dynamic lifeCycle = await platform.invokeMethod("requestLifeCycle");
+    print("getLifeCycle():$lifeCycle");
+
+    if (lifeCycle != null && lifeCycle == "onNewIntent") {
+      _launchPref();
+    }
+  }
+
+  void _launchPref() async {
+    bool launchScanner = await _isDefaultLaunchScanner;
+    print("_launchPref() launchScanner=$launchScanner");
+    if (launchScanner) {
+      scanQR();
+    }
+  }
+
+  Future<void> _setPrefLaunchScanner() async {
+    final SharedPreferences prefs = await _prefs;
+    bool launchScanner = await _isDefaultLaunchScanner;
+    prefs.setBool(PREF_KEY_LAUNCH_SCANNER, !launchScanner);
+  }
 }
+
+class MenuItem {
+  const MenuItem({required this.title, required this.icon});
+
+  final String title;
+  final IconData icon;
+}
+
+const List<MenuItem> choices = const <MenuItem>[
+  const MenuItem(
+    title: '直接開啟掃瞄器',
+    icon: Icons.qr_code_scanner_sharp,
+  ),
+];
