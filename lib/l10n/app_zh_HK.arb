@@ -34,5 +34,6 @@
   "error_input_place_name": "沒有輸入場所名稱",
   "dismissible_edit": "編輯",
   "dismissible_delete": "刪除",
-  "place_code_has_been_deleted": "場所代碼已刪除"
+  "place_code_has_been_deleted": "場所代碼已刪除",
+  "turn_on_scanner_directly": "直接開啟掃描器"
 }

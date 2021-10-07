@@ -139,5 +139,9 @@
   "place_code_has_been_deleted": "Place code has been deleted.",
   "@place_code_has_been_deleted": {
     "description": ""
+  },
+  "turn_on_scanner_directly": "Turn on scanner directly",
+  "@turn_on_scanner_directly": {
+    "description": ""
   }
 }

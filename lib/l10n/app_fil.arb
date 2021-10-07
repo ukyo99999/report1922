@@ -34,5 +34,6 @@
   "error_input_place_name": "No input place name",
   "dismissible_edit": "Edit",
   "dismissible_delete": "Delete",
-  "place_code_has_been_deleted": "Place code has been deleted."
+  "place_code_has_been_deleted": "Place code has been deleted.",
+  "turn_on_scanner_directly": "Turn on scanner directly"
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -31,6 +32,7 @@ class _FavoritePage extends State<FavoritePage> with WidgetsBindingObserver {
   static const String PREF_KEY_LAUNCH_SCANNER = "IS_DEFAULT_SCANNER";
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   late Future<bool> _isDefaultLaunchScanner;
+  late bool isScannerSwitched;
 
   @override
   void initState() {
@@ -61,7 +63,6 @@ class _FavoritePage extends State<FavoritePage> with WidgetsBindingObserver {
   @override
   void dispose() {
     super.dispose();
-    print("@@@@@@@@@  dispose");
     WidgetsBinding.instance?.removeObserver(this);
   }
 
@@ -94,26 +95,47 @@ class _FavoritePage extends State<FavoritePage> with WidgetsBindingObserver {
     final String placeCodeDeleted =
         AppLocalizations.of(context)!.place_code_has_been_deleted;
 
+    final String turnOnScannerDirectly =
+        AppLocalizations.of(context)!.turn_on_scanner_directly;
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
           appBar: AppBar(
             title: Text(AppLocalizations.of(context)!.app_title),
             actions: <Widget>[
-              PopupMenuButton<MenuItem>(
-                onSelected: _menuItemSelect,
-                itemBuilder: (BuildContext context) {
-                  return choices.map((MenuItem choice) {
-                    return PopupMenuItem<MenuItem>(
-                      value: choice,
-                      child: ListTile(
-                        leading: Icon(choice.icon),
-                        title: Text(choice.title),
-                      ),
-                    );
-                  }).toList();
-                },
-              ),
+              Padding(
+                  padding: EdgeInsets.only(right: 20.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return Wrap(
+                              children: [
+                                StatefulBuilder(
+                                    builder: (BuildContext context, setState) =>
+                                        SwitchListTile(
+                                          secondary:
+                                              Icon(Icons.qr_code_scanner_sharp),
+                                          title: Text(turnOnScannerDirectly),
+                                          value: isScannerSwitched,
+                                          onChanged: (bool value) {
+                                            _setPrefLaunchScanner();
+                                            setState(() {
+                                              isScannerSwitched = value;
+                                            });
+                                          },
+                                        ))
+                              ],
+                            );
+                          });
+                    },
+                    child: Icon(
+                      Icons.settings,
+                      size: 26.0,
+                    ),
+                  )),
             ],
           ),
           body: Stack(
@@ -536,14 +558,6 @@ class _FavoritePage extends State<FavoritePage> with WidgetsBindingObserver {
     });
   }
 
-  void _menuItemSelect(MenuItem index) {
-    switch (choices.indexOf(index)) {
-      case 0:
-        _setPrefLaunchScanner();
-        break;
-    }
-  }
-
   void getLifeCycle() async {
     dynamic lifeCycle = await platform.invokeMethod("requestLifeCycle");
     print("getLifeCycle():$lifeCycle");
@@ -557,7 +571,10 @@ class _FavoritePage extends State<FavoritePage> with WidgetsBindingObserver {
     bool launchScanner = await _isDefaultLaunchScanner;
     print("_launchPref() launchScanner=$launchScanner");
     if (launchScanner) {
+      isScannerSwitched = true;
       scanQR();
+    } else {
+      isScannerSwitched = false;
     }
   }
 
@@ -567,17 +584,3 @@ class _FavoritePage extends State<FavoritePage> with WidgetsBindingObserver {
     prefs.setBool(PREF_KEY_LAUNCH_SCANNER, !launchScanner);
   }
 }
-
-class MenuItem {
-  const MenuItem({required this.title, required this.icon});
-
-  final String title;
-  final IconData icon;
-}
-
-const List<MenuItem> choices = const <MenuItem>[
-  const MenuItem(
-    title: '直接開啟掃瞄器',
-    icon: Icons.qr_code_scanner_sharp,
-  ),
-];
